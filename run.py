@@ -34,8 +34,9 @@ if __name__ == '__main__':
 	    API_SECRET, username = username, password_hash = password_hash)
 
 	while True:
-		if lastfm_api.get_user('ngalayko').get_now_playing():
-			vk_api.status.set(text = 'Слушаю: ' + str(lastfm_api.get_user('ngalayko').get_now_playing()))
+		if lastfm_api.get_user(namespace.last_fm_login).get_now_playing():
+			vk_api.status.set(text = 'Слушаю: ' + str(lastfm_api.get_user(namespace.last_fm_login).get_now_playing()))
+			print(lastfm_api.get_user(namespace.last_fm_login).get_now_playing())
 		else:
 			vk_api.status.set(text = 'Fuck it, Dude. Let\'s go bowling.')
 		time.sleep(10)
