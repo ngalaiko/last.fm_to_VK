@@ -10,6 +10,7 @@ def create_parser():
 	parser.add_argument('-lp', '--last-fm-password', default = None)
 	parser.add_argument('-vl', '--vk-login', default = None)
 	parser.add_argument('-vp', '--vk-password', default = None)
+	parser.add_argument('-s', '--status', default = '')
 
 	return parser
 
@@ -36,7 +37,6 @@ if __name__ == '__main__':
 	while True:
 		if lastfm_api.get_user(namespace.last_fm_login).get_now_playing():
 			vk_api.status.set(text = 'Слушаю: ' + str(lastfm_api.get_user(namespace.last_fm_login).get_now_playing()))
-			print(lastfm_api.get_user(namespace.last_fm_login).get_now_playing())
-		else:
-			vk_api.status.set(text = 'Fuck it, Dude. Let\'s go bowling.')
+		elif vk_api.status.get()['text'] != namespace.status:
+			vk_api.status.set(text = namespace.status)
 		time.sleep(10)
