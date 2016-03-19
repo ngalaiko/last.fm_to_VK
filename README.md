@@ -8,5 +8,5 @@ pip3 install vk
 ```
 #Запуск:
 ```
-python3 run.py -ll <last_fm_login> -lp <last_fm_password> -vl <vk_login> -vp <vk_password> -s <status>
+python3 run.py -ll <last_fm_login> -lp <last_fm_password> -vl <vk_login> -vp <vk_password> -s <status> &
 ```
