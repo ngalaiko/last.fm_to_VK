@@ -1,24 +1,41 @@
 import pylast
 import vk
 import time
+import argparse
+import sys
 
-API_KEY = "bedb9e9f4b1e4a7df1fdf5440ef3f6aa" 
-API_SECRET = "e2496730a8ed87e0579f9ab3d03418e9"
-VK_LOGIN = ''
-VK_PASS = ''
+def create_parser():
+	parser = argparse.ArgumentParser()
+	parser.add_argument('-ll', '--last-fm-login', default = None)
+	parser.add_argument('-lp', '--last-fm-password', default = None)
+	parser.add_argument('-vl', '--vk-login', default = None)
+	parser.add_argument('-vp', '--vk-password', default = None)
 
-username = ""
-password_hash = pylast.md5("")
+	return parser
 
-session = vk.AuthSession(app_id='4973555', user_login = VK_LOGIN, user_password = VK_PASS, scope = 'status')
-vk_api = vk.API(session)
+if __name__ == '__main__':
+	API_KEY = "bedb9e9f4b1e4a7df1fdf5440ef3f6aa" 
+	API_SECRET = "e2496730a8ed87e0579f9ab3d03418e9"
 
-lastfm_api = pylast.LastFMNetwork(api_key = API_KEY, api_secret =
-    API_SECRET, username = username, password_hash = password_hash)
+	parser = create_parser()
+	namespace = parser.parse_args(sys.argv[1:])
 
-while True:
-	if lastfm_api.get_user('ngalayko').get_now_playing():
-		vk_api.status.set(text = 'Слушаю: ' + lastfm_api.get_user('ngalayko').get_now_playing())
-	else:
-		vk_api.status.set(text = 'Fuck it, Dude. Let\'s go bowling.')
-	time.sleep(10)
+	if not namespace.last_fm_login and not namespace.last_fm_password and not namespace.vk_login and not namespace.vk_password:
+		print('You should use all flags!')
+		sys.exit()
+
+	username = namespace.last_fm_login
+	password_hash = pylast.md5(namespace.last_fm_password)
+
+	session = vk.AuthSession(app_id='4973555', user_login = namespace.vk_login, user_password = namespace.vk_password, scope = 'status')
+	vk_api = vk.API(session)
+
+	lastfm_api = pylast.LastFMNetwork(api_key = API_KEY, api_secret =
+	    API_SECRET, username = username, password_hash = password_hash)
+
+	while True:
+		if lastfm_api.get_user('ngalayko').get_now_playing():
+			vk_api.status.set(text = 'Слушаю: ' + str(lastfm_api.get_user('ngalayko').get_now_playing()))
+		else:
+			vk_api.status.set(text = 'Fuck it, Dude. Let\'s go bowling.')
+		time.sleep(10)
