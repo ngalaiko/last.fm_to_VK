@@ -25,18 +25,17 @@ if __name__ == '__main__':
 		print('You should use all flags!')
 		sys.exit()
 
-	username = namespace.last_fm_login
-	password_hash = pylast.md5(namespace.last_fm_password)
-
 	session = vk.AuthSession(app_id='4973555', user_login = namespace.vk_login, user_password = namespace.vk_password, scope = 'status')
 	vk_api = vk.API(session)
 
 	lastfm_api = pylast.LastFMNetwork(api_key = API_KEY, api_secret =
-	    API_SECRET, username = username, password_hash = password_hash)
+	    API_SECRET, username = namespace.last_fm_login, password_hash = pylast.md5(namespace.last_fm_password))
 
 	while True:
-		if lastfm_api.get_user(namespace.last_fm_login).get_now_playing():
-			vk_api.status.set(text = 'Слушаю: ' + str(lastfm_api.get_user(namespace.last_fm_login).get_now_playing()))
-		elif vk_api.status.get()['text'] != namespace.status:
+		curr_status = vk_api.status.get()['text']
+		curr_playing = lastfm_api.get_user(namespace.last_fm_login).get_now_playing()
+		if curr_playing and curr_status.replace('Слушаю: ', '') != str(curr_playing):
+			vk_api.status.set(text = 'Слушаю: ' + str(curr_playing))
+		elif not curr_playing and curr_status != namespace.status:
 			vk_api.status.set(text = namespace.status)
-		time.sleep(10)
+		time.sleep(0.3)
